@@ -23,24 +23,27 @@ public class Main {
             CommandLine cmd = parser.parse(options, args);
             String inputFile = cmd.getOptionValue("i");
 
-            logger.info("**** Reading the maze from file " + inputFile);
-            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                for (int idx = 0; idx < line.length(); idx++) {
-                    if (line.charAt(idx) == '#') {
-                        logger.info("WALL ");
-                    } else if (line.charAt(idx) == ' ') {
-                        logger.info("PASS ");
-                    }
-                }
-                System.out.print(System.lineSeparator());
+            if (inputFile == null) {
+                logger.error("No input file specified.");
+                return;
             }
+
+            logger.info("**** Reading the maze from file " + inputFile);
+            Maze maze = new Maze();
+            maze.loadFromFile(inputFile);  // Load the maze
+
+            maze.printMaze();  // Print the maze for debugging
+
+            logger.info("**** Computing path");
+            PathFinder pathFinder = new PathFinder();
+            String path = pathFinder.findPath(maze);  // Get the path using the PathFinder
+
+            logger.info("Computed Path: " + path);  // Output the path
+
         } catch(Exception e) {
-            logger.error("/!\\ An error has occured /!\\");
+            logger.error("/!\\ An error has occurred /!\\");
+            e.printStackTrace();
         }
-        logger.info("**** Computing path");
-        logger.warn("PATH NOT COMPUTED");
         logger.info("** End of MazeRunner");
     }
 }
